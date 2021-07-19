@@ -20,7 +20,7 @@ elif "mail.ru" in from_email:
 else:
     print("Неопознанный домен")
     exit
-
+server.login(from_email, password)
 for human in people.values:
     print(human[0], human[1])
     msg = MIMEMultipart()
@@ -31,10 +31,8 @@ for human in people.values:
     for key in contacts.keys():
         contacts_string += '– {}: {}<br>'.format(key, contacts[key])
     msg.attach(MIMEText(html.format(human[0], name, contacts_string), 'html', 'utf-8'))
-    server.login(from_email, password)
     server.sendmail(from_email, human[1], msg.as_string())
-    server.quit()
     count +=1
     print('{}/{}'.format(count, len(people.values)))
     time.sleep(10)
-
+server.quit()
