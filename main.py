@@ -19,7 +19,7 @@ elif "mail.ru" in from_email:
     server = smtplib.SMTP_SSL('smtp.mail.ru:465')
 else:
     print("Неопознанный домен")
-    exit
+    exit(0)
 server.login(from_email, password)
 for human in people.values:
     print(human[0], human[1])
