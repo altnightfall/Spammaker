@@ -17,6 +17,8 @@ elif "yandex.ru" in from_email:
     yandex = True
 elif "mail.ru" in from_email:
     server = smtplib.SMTP_SSL('smtp.mail.ru:465')
+elif "muctr.ru" in from_email:
+    server = smtplib.SMTP_SSL('smtp.muctr.ru:465')
 else:
     print("Неопознанный домен")
     exit(0)
@@ -25,8 +27,8 @@ for human in people.values:
     print(human[0], human[1])
     msg = MIMEMultipart()
     msg['Subject'] = 'Информация для абитуриентов ЦиТХИн'
-    if yandex:
-        msg['From'] = from_email
+    msg['From'] = from_email
+    msg['To'] = human[1]
     contacts_string = ""
     for key in contacts.keys():
         contacts_string += '– {}: {}<br>'.format(key, contacts[key])
