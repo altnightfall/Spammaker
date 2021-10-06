@@ -1,4 +1,4 @@
-from_email = '@yandex.ru'
+from_email = '@mail.ru'
 password = ''
 name = 'Иван'
 contacts = {

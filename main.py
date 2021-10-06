@@ -7,7 +7,7 @@ from config import from_email, password, html, name, contacts
 import pandas as pd
 
 
-def send_mail(in_file, mail, psw, html_text):
+def send_mail(in_file, mail, psw, header, html_text):
     people = pd.read_excel('test.xlsx')
     count = 0
     yandex =False
@@ -28,7 +28,7 @@ def send_mail(in_file, mail, psw, html_text):
     for human in people.values:
         print(human[0], human[1])
         msg = MIMEMultipart()
-        msg['Subject'] = 'Информация для абитуриентов ЦиТХИн'
+        msg['Subject'] = header
         msg['From'] = from_email
         msg['To'] = human[1]
         dict_const = {}

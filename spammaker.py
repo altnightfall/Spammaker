@@ -1,10 +1,12 @@
 import sys
+import json
 from PyQt5 import QtWidgets
 import design
 import const_design
 import re
 from more_itertools import unique_everseen
 from main import send_mail
+
 
 class ConstApp(QtWidgets.QMainWindow, const_design.Ui_MainWindow):
     def __init__(self):
@@ -31,7 +33,8 @@ class ConstApp(QtWidgets.QMainWindow, const_design.Ui_MainWindow):
                 str_dict = ""
                 for i in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(i, 0) is not None and self.tableWidget.item(i, 1) is not None:
-                        str_dict += '– {}: {}<br>'.format(self.tableWidget.item(i, 0).text(), self.tableWidget.item(i, 1).text())
+                        str_dict += '– {}: {}<br>'.format(self.tableWidget.item(i, 0).text(),
+                                                          self.tableWidget.item(i, 1).text())
                 self.parent_w.const[key] = str_dict
                 self.listWidget.addItem(key)
             elif tab == "Из файла":
@@ -50,6 +53,21 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.const_widow.parent_w = self
         self.const = {}
         self.in_file = {}
+        #Судя по всему придется использовать CSV, а не JSON
+        with open('constants.json', encoding='utf-8') as json_file:
+            constants = json.load(json_file)
+            for key in constants:
+                self.constantListWidget.addItem(key)
+        self.constantListWidget.clicked.connect(lambda: self.constantSelect(constants))
+        self.saveConstToBufferButton.clicked.connect(lambda: self.saveConstToBufferButton(constants))
+
+    def constantSelect(self, constants):
+        self.constNameEdit.setText(self.constantListWidget.currentItem().text())
+        self.constTextEdit.setPlainText(constants[self.constantListWidget.currentItem().text()])
+
+    def saveConstToBufferButton(self, constants):
+        pass
+
 
     def create_html(self):
         text = self.plainTextEdit.toPlainText()
@@ -60,7 +78,8 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 self.const[c] = "{" + c + "}"
         text = text.format(**self.const)
         html_text = """<html><head></head><body><p>{}</p></body></html>""".format(text.replace("\n", "<br>"))
-        send_mail(self.in_file, '', '', html_text)
+        msg_header = self.emailHeaderEdit.text()
+        send_mail(self.in_file, '', '', msg_header, html_text)
 
     def onen_const(self):
         self.const_widow.show()
