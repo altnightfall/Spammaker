@@ -24,7 +24,7 @@ def send_mail(in_file, mail, psw, header, html_text):
     else:
         print("Неопознанный домен")
         exit(0)
-    server.login(from_email, password)
+    server.login(mail, psw)
     for human in people.values:
         print(human[0], human[1])
         msg = MIMEMultipart()

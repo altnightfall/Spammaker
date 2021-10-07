@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'spammaker.ui'
+# Form implementation generated from reading ui file 'Spammaker.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -113,9 +113,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.saveConstToBufferButton = QtWidgets.QPushButton(self.centralwidget)
-        self.saveConstToBufferButton.setObjectName("saveConstToBufferButton")
-        self.horizontalLayout_3.addWidget(self.saveConstToBufferButton)
+        self.saveConstButton = QtWidgets.QPushButton(self.centralwidget)
+        self.saveConstButton.setObjectName("saveConstButton")
+        self.horizontalLayout_3.addWidget(self.saveConstButton)
         self.deleteConstButton = QtWidgets.QPushButton(self.centralwidget)
         self.deleteConstButton.setObjectName("deleteConstButton")
         self.horizontalLayout_3.addWidget(self.deleteConstButton)
@@ -140,9 +140,9 @@ class Ui_MainWindow(object):
         self.pushButton_3 = QtWidgets.QPushButton(self.frame)
         self.pushButton_3.setObjectName("pushButton_3")
         self.gridLayout.addWidget(self.pushButton_3, 1, 0, 1, 1)
-        self.pushButton_4 = QtWidgets.QPushButton(self.frame)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.gridLayout.addWidget(self.pushButton_4, 1, 2, 1, 1)
+        self.selectEmailButton = QtWidgets.QPushButton(self.frame)
+        self.selectEmailButton.setObjectName("selectEmailButton")
+        self.gridLayout.addWidget(self.selectEmailButton, 1, 2, 1, 1)
         self.verticalLayout.addWidget(self.frame)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -188,10 +188,10 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Словарь"))
         self.label_5.setText(_translate("MainWindow", "Константа"))
         self.label_4.setText(_translate("MainWindow", "Значение"))
-        self.saveConstToBufferButton.setText(_translate("MainWindow", "Добавить"))
+        self.saveConstButton.setText(_translate("MainWindow", "Сохранить"))
         self.deleteConstButton.setText(_translate("MainWindow", "Удалить"))
         self.importConstButton.setText(_translate("MainWindow", "Импортировать"))
         self.pushButton.setText(_translate("MainWindow", "Тестовое письмо"))
         self.pushButton_2.setText(_translate("MainWindow", "Выбрать файл"))
         self.pushButton_3.setText(_translate("MainWindow", "Редактировать переменные"))
-        self.pushButton_4.setText(_translate("MainWindow", "Выбрать почту для отправки"))
+        self.selectEmailButton.setText(_translate("MainWindow", "Выбрать почту для отправки"))

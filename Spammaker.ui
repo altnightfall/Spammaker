@@ -182,9 +182,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QPushButton" name="saveConstToBufferButton">
+           <widget class="QPushButton" name="saveConstButton">
             <property name="text">
-             <string>Добавить</string>
+             <string>Сохранить</string>
             </property>
            </widget>
           </item>
@@ -239,7 +239,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="selectEmailButton">
          <property name="text">
           <string>Выбрать почту для отправки</string>
          </property>

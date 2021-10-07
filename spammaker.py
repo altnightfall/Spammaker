@@ -1,3 +1,4 @@
+import copy
 import sys
 import json
 from PyQt5 import QtWidgets
@@ -6,6 +7,23 @@ import const_design
 import re
 from more_itertools import unique_everseen
 from main import send_mail
+
+
+class LoginWindow(QtWidgets.QDialog):
+    def __init__(self):
+        super().__init__()
+
+        self.login = QtWidgets.QLineEdit()
+        self.login.setPlaceholderText('Введите почту...')
+
+        self.password = QtWidgets.QLineEdit()
+        self.password.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.password.setPlaceholderText('Введите пароль...')
+
+        layout = QtWidgets.QFormLayout()
+        layout.addRow('Mail:', self.login)
+        layout.addRow('Password:', self.password)
+        self.setLayout(layout)
 
 
 class ConstApp(QtWidgets.QMainWindow, const_design.Ui_MainWindow):
@@ -53,34 +71,50 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.const_widow.parent_w = self
         self.const = {}
         self.in_file = {}
+        self.mail = ''
+        self.password = ''
         self.addEmailTableRowButton.clicked.connect(self.addEmailTableRow)
         self.addEmailTableColumnButton.clicked.connect(self.addEmailTableColumn)
         self.deleteEmailTableColumnButton.clicked.connect(self.deleteEmailTableColumn)
         self.deleteEmailTableRowButton.clicked.connect(self.deleteEmailTableRow)
         self.importEmailTableButton.clicked.connect(self.importEmailTable)
+        self.selectEmailButton.clicked.connect(self.selectEmail)
 
         #Судя по всему придется использовать CSV, а не JSON
         with open('constants.json', encoding='utf-8') as json_file:
             constants = json.load(json_file)
             for key in constants:
                 self.constantListWidget.addItem(key)
-        self.constantListWidget.clicked.connect(lambda: self.constantSelect(constants))
-        self.saveConstToBufferButton.clicked.connect(lambda: self.saveConstToBufferButton(constants))
+        self.constants = constants
+        self.constantListWidget.clicked.connect(self.constantSelect)
+        self.saveConstButton.clicked.connect(self.constantSave)
+        self.deleteConstButton.clicked.connect(self.constantsDelete)
 
 
 
 
     def create_html(self):
+        QtWidgets.QDialog
         text = self.plainTextEdit.toPlainText()
         consts = re.findall(r'(?<={)\w+(?=})', text)
         consts = list(unique_everseen(consts))
+        temp_const = copy.copy(self.constants)
         for c in consts:
-            if self.const.get(c) is None:
-                self.const[c] = "{" + c + "}"
-        text = text.format(**self.const)
+            if temp_const.get(c) is None:
+                temp_const[c] = "{" + c + "}"
+        text = text.format(**temp_const)
         html_text = """<html><head></head><body><p>{}</p></body></html>""".format(text.replace("\n", "<br>"))
         msg_header = self.emailHeaderEdit.text()
-        send_mail(self.in_file, '', '', msg_header, html_text)
+        send_mail(self.in_file, self.mail, self.password, msg_header, html_text)
+
+
+    def selectEmail(self):
+        login = LoginWindow()
+        login.open()
+        login.exec_()
+        self.mail = login.login.text()
+        self.password = login.password.text()
+
 
     def onen_const(self):
         self.const_widow.show()
@@ -105,12 +139,29 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         pass #add import
 
     #constants functions
-    def constantSelect(self, constants):
+    def constantSelect(self):
         self.constNameEdit.setText(self.constantListWidget.currentItem().text())
-        self.constTextEdit.setPlainText(constants[self.constantListWidget.currentItem().text()])
+        self.constTextEdit.setPlainText(self.constants[self.constantListWidget.currentItem().text()])
 
-    def saveConstToBufferButton(self, constants):
-        pass
+    def constantSave(self):
+        if self.constNameEdit.text() != '':
+            if self.constNameEdit.text() not in self.constants:
+                self.constantListWidget.addItem(self.constNameEdit.text())
+            self.constants[self.constNameEdit.text()] = self.constTextEdit.toPlainText()
+            with open('constants.json', 'w', encoding='utf-8') as json_file:
+                json.dump(self.constants, json_file)
+
+    def constantsDelete(self):
+        item = self.constantListWidget.currentItem()
+        if item is not None:
+            self.constants.pop(item.text())
+            self.constantListWidget.takeItem(self.constantListWidget.row(item))
+            with open('constants.json', 'w', encoding='utf-8') as json_file:
+                json.dump(self.constants, json_file)
+            self.constNameEdit.clear()
+            self.constTextEdit.clear()
+
+
     #connect buttons
 
 
