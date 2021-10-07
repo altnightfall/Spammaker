@@ -53,6 +53,12 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.const_widow.parent_w = self
         self.const = {}
         self.in_file = {}
+        self.addEmailTableRowButton.clicked.connect(self.addEmailTableRow)
+        self.addEmailTableColumnButton.clicked.connect(self.addEmailTableColumn)
+        self.deleteEmailTableColumnButton.clicked.connect(self.deleteEmailTableColumn)
+        self.deleteEmailTableRowButton.clicked.connect(self.deleteEmailTableRow)
+        self.importEmailTableButton.clicked.connect(self.importEmailTable)
+
         #Судя по всему придется использовать CSV, а не JSON
         with open('constants.json', encoding='utf-8') as json_file:
             constants = json.load(json_file)
@@ -61,12 +67,7 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.constantListWidget.clicked.connect(lambda: self.constantSelect(constants))
         self.saveConstToBufferButton.clicked.connect(lambda: self.saveConstToBufferButton(constants))
 
-    def constantSelect(self, constants):
-        self.constNameEdit.setText(self.constantListWidget.currentItem().text())
-        self.constTextEdit.setPlainText(constants[self.constantListWidget.currentItem().text()])
 
-    def saveConstToBufferButton(self, constants):
-        pass
 
 
     def create_html(self):
@@ -84,6 +85,35 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def onen_const(self):
         self.const_widow.show()
         print(self.const, self.in_file)
+
+
+    #variables table buttons
+    def addEmailTableRow(self):
+        self.variablesTableWidget.insertRow(self.variablesTableWidget.rowCount())
+
+    def deleteEmailTableRow(self):
+        self.variablesTableWidget.removeRow(self.variablesTableWidget.currentRow())
+
+    def addEmailTableColumn(self):
+        self.variablesTableWidget.insertColumn(self.variablesTableWidget.columnCount()) #Can't change name of the header yet...
+
+
+    def deleteEmailTableColumn(self):
+        self.variablesTableWidget.removeColumn(self.variablesTableWidget.currentColumn())
+
+    def importEmailTable(self):
+        pass #add import
+
+    #constants functions
+    def constantSelect(self, constants):
+        self.constNameEdit.setText(self.constantListWidget.currentItem().text())
+        self.constTextEdit.setPlainText(constants[self.constantListWidget.currentItem().text()])
+
+    def saveConstToBufferButton(self, constants):
+        pass
+    #connect buttons
+
+
 
 
 def main():
