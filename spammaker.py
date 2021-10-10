@@ -6,13 +6,14 @@ import design
 import const_design
 import re
 from more_itertools import unique_everseen
-from main import send_mail
+from main import send_mail, check_mail
 
 
 class LoginWindow(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
 
+        self.setWindowTitle('Авторизация')
         self.login = QtWidgets.QLineEdit()
         self.login.setPlaceholderText('Введите почту...')
 
@@ -20,9 +21,13 @@ class LoginWindow(QtWidgets.QDialog):
         self.password.setEchoMode(QtWidgets.QLineEdit.Password)
         self.password.setPlaceholderText('Введите пароль...')
 
+        self.okButton = QtWidgets.QPushButton(text='Войти')
+        self.okButton.clicked.connect(self.close)
+
         layout = QtWidgets.QFormLayout()
         layout.addRow('Mail:', self.login)
         layout.addRow('Password:', self.password)
+        layout.addRow(self.okButton)
         self.setLayout(layout)
 
 
@@ -89,12 +94,17 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.constantListWidget.clicked.connect(self.constantSelect)
         self.saveConstButton.clicked.connect(self.constantSave)
         self.deleteConstButton.clicked.connect(self.constantsDelete)
-
-
-
+        self.importConstButton.clicked.connect(self.importConstants)
 
     def create_html(self):
-        QtWidgets.QDialog
+        if self.mail == '':
+            msg = QtWidgets.QMessageBox.question(
+                self,
+                'Отсутствет почта',
+                "Не выбрана почта для отправки",
+                QtWidgets.QMessageBox.Close
+            )
+            return
         text = self.plainTextEdit.toPlainText()
         consts = re.findall(r'(?<={)\w+(?=})', text)
         consts = list(unique_everseen(consts))
@@ -112,8 +122,17 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         login = LoginWindow()
         login.open()
         login.exec_()
-        self.mail = login.login.text()
-        self.password = login.password.text()
+        if check_mail(login.login.text(), login.password.text()):
+            self.mail = login.login.text()
+            self.password = login.password.text()
+            #Тут нужно сделать вывод почты в лейбл на формочке
+        else:
+            msg = QtWidgets.QMessageBox.question(
+                self,
+                'Ошибка авторизации',
+                "Не удалось выполнить вход в почту",
+                QtWidgets.QMessageBox.Close
+            )
 
 
     def onen_const(self):
@@ -161,6 +180,18 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.constNameEdit.clear()
             self.constTextEdit.clear()
 
+    def importConstants(self):
+        fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть файл для импорта', str(sys.path) + '/', '*.json')[0]
+        if fname != '':
+            with open(fname, encoding='utf-8') as json_file:
+                constants = json.load(json_file)
+                for key in constants:
+                    if isinstance(constants[key], str):
+                        if key not in self.constants:
+                            self.constantListWidget.addItem(key)
+                        self.constants[key] = constants[key]
+        with open('constants.json', 'w', encoding='utf-8') as json_file:
+            json.dump(self.constants, json_file)
 
     #connect buttons
 
