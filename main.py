@@ -27,7 +27,7 @@ def check_mail(mail, psw):
 
 
 def send_mail(in_file, mail, psw, header, html_text):
-    people = pd.read_excel('test.xlsx')
+    people = pd.read_excel('sending.xlsx')
     count = 0
     yandex =False
     if "gmail.com" in from_email:
@@ -49,12 +49,12 @@ def send_mail(in_file, mail, psw, header, html_text):
         msg = MIMEMultipart()
         msg['Subject'] = header
         msg['From'] = from_email
-        msg['To'] = human[1]
+        msg['To'] = human[0]
         dict_const = {}
         for key in in_file.keys():
             dict_const[key] = human[in_file[key] - 1]
         msg.attach(MIMEText(html_text.format(**dict_const), 'html', 'utf-8'))
-        server.sendmail(from_email, human[1], msg.as_string())
+        server.sendmail(from_email, human[0], msg.as_string())
         count +=1
         print('{}/{}'.format(count, len(people.values)))
         time.sleep(10)

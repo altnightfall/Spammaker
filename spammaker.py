@@ -4,6 +4,7 @@ import json
 from PyQt5 import QtWidgets
 import design
 import re
+import pandas as pd
 from more_itertools import unique_everseen
 from main import send_mail, check_mail
 
@@ -58,6 +59,17 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.importConstButton.clicked.connect(self.importConstants)
 
     def create_html(self):
+        columnHeaders = []
+        # create column header list
+        for j in range(self.variablesTableWidget.model().columnCount()):
+            columnHeaders.append(self.variablesTableWidget.horizontalHeaderItem(j).text())
+        df = pd.DataFrame(columns=columnHeaders)
+        # create dataframe object recordset
+        for row in range(self.variablesTableWidget.rowCount()):
+            for col in range(self.variablesTableWidget.columnCount()):
+                df.at[row, columnHeaders[col]] = self.variablesTableWidget.item(row, col).text()
+        df.to_excel('sending.xlsx', index=False)
+
         if self.mail == '':
             msg = QtWidgets.QMessageBox.question(
                 self,
@@ -150,9 +162,37 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         with open('constants.json', 'w', encoding='utf-8') as json_file:
             json.dump(self.constants, json_file)
 
-    #connect buttons
+    def importEmailTable(self):
+        fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Открыть файл для импорта', str(sys.path) + '/', '*.xlsx')[0]
+        if fname !='':
+            xl = pd.ExcelFile(fname)
+            email_table_data = xl.parse('Лист1')
+            self.variablesTableWidget.clear()
+            self.variablesTableWidget.setRowCount(len(email_table_data))
 
+            max_column = 0
+            for student in email_table_data.values:
+                if len(student) > max_column:
+                    max_column = len(student)
+            self.variablesTableWidget.setColumnCount(max_column)
 
+            row = 0
+            column = 0
+            for student in email_table_data.values:
+                for el in student:
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText(str(el))
+                    self.variablesTableWidget.setItem(row, column, item)
+                    column += 1
+                row +=1
+                column = 0
+
+            i = 0
+            for header in email_table_data:
+                item = QtWidgets.QTableWidgetItem()
+                item.setText(str(header))
+                self.variablesTableWidget.setHorizontalHeaderItem(i, item)
+                i += 1
 
 
 def main():
