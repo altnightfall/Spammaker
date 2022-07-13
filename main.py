@@ -52,7 +52,7 @@ def send_mail(in_file, mail, psw, header, html_text):
         msg['To'] = human[0]
         dict_const = {}
         for key in in_file.keys():
-            dict_const[key] = human[in_file[key] - 1]
+            dict_const[key] = human[in_file[key]]
         msg.attach(MIMEText(html_text.format(**dict_const), 'html', 'utf-8'))
         server.sendmail(mail, human[0], msg.as_string())
         count +=1

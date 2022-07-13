@@ -88,6 +88,9 @@ class MainApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         text = text.format(**temp_const)
         html_text = """<html><head></head><body><p>{}</p></body></html>""".format(text.replace("\n", "<br>"))
         msg_header = self.emailHeaderEdit.text()
+        self.in_file = {}
+        for count, value in enumerate(columnHeaders):
+            self.in_file[value] = count
         send_mail(self.in_file, self.mail, self.password, msg_header, html_text)
 
 
