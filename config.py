@@ -1,5 +1,5 @@
-from_email = '@mail.ru'
-password = ''
+from_email = 'mail@mail.ru'
+password = 'password'
 name = 'Иван'
 contacts = {
     "ВКонтакте": "https://vk.com/id12345",
