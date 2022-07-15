@@ -16,7 +16,8 @@ def check_mail(mail, psw):
     elif "mail.ru" in mail:
         server = smtplib.SMTP_SSL('smtp.mail.ru:465')
     elif "muctr.ru" in mail:
-        server = smtplib.SMTP_SSL('smtp.muctr.ru:465')
+        server = smtplib.SMTP('post.muctr.ru:587')
+        server.starttls()
     else:
         return False
     try:
@@ -39,7 +40,8 @@ def send_mail(in_file, mail, psw, header, html_text):
     elif "mail.ru" in mail:
         server = smtplib.SMTP_SSL('smtp.mail.ru:465')
     elif "muctr.ru" in mail:
-        server = smtplib.SMTP_SSL('smtp.muctr.ru:465')
+        server = smtplib.SMTP('post.muctr.ru:587')
+        server.starttls()
     else:
         print("Неопознанный домен")
         exit(0)
